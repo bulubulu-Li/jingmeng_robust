@@ -95,7 +95,8 @@ class txt_loader(BaseLoader):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-
+UPLOAD_FOLDER = './uploads'  #文件存放路径
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 with open("config.yaml", "r", encoding="utf-8") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
     if 'HTTPS_PROXY' in config:
@@ -728,6 +729,22 @@ def new_chat():
     print("新建聊天对象")
     return {"code": 200, "data": {"name": name, "id": new_chat_id, "selected": True}}
 
+@app.route('/fileUpload', methods=['GET','POST'])
+def fileUpload():
+    """
+    上传文件
+    :return:
+    """
+    if request.method == 'POST':
+        # input标签中的name的属性值
+        f = request.files['file']
+        # 拼接地址，上传地址，f.filename：直接获取文件名
+        file = f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+        # 输出上传的文件名
+        print(request.files, f.filename)
+        return file
+    else:
+        return " "
 
 @app.route('/deleteHistory', methods=['GET'])
 def delete_history():
@@ -902,7 +919,8 @@ if __name__ == '__main__':
 
             if len(split_docs) > 0:
                 if docsearch is None:
-                    docsearch=Chroma.from_documents(split_docs,embeddings)
+                    # docsearch=Chroma.from_documents(split_docs,embeddings)
+                    pass
                 else:
                     docsearch.add_documents(split_docs)
     # deal with json
@@ -911,7 +929,8 @@ if __name__ == '__main__':
 
     if len(split_docs) > 0:
         if docsearch is None:
-            docsearch=Chroma.from_documents(json_data,embeddings)
+            # docsearch=Chroma.from_documents(json_data,embeddings)
+            pass
         else:
             docsearch.add_documents(json_data)
 
