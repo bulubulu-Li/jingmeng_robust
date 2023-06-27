@@ -738,10 +738,12 @@ def fileUpload():
     if request.method == 'POST':
         # input标签中的name的属性值
         f = request.files['file']
+        print(request.files, f.filename)
         # 拼接地址，上传地址，f.filename：直接获取文件名
         file = f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
         # 输出上传的文件名
         print(request.files, f.filename)
+        print(docsearch)
         return file
     else:
         return " "
